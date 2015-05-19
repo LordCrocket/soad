@@ -3,31 +3,15 @@ use warnings;
 use Information;
 use Player;
 use Citizen;
+use GenerateCitizen;
 use Event;
 use Data::Dumper;
 use Moose::Util::TypeConstraints;
 
-my $diplomat = Citizen->new(
-	name => "Harry Gold", 
-	age => 56, 
-	occupation => "diplomat",
-	loyalty => 3,
-	financial_status => 9,
-	social_life => 3);
-my $diplomat2 = Citizen->new(
-	name => "Agatha Northwood", 
-	age => 39, 
-	occupation => "diplomat",
-	loyalty => 7,
-	financial_status => 5,
-	social_life => 5);
-my $agent = Citizen->new(
-	name => " Northwood", 
-	age => 34, 
-	occupation => "chef",
-	loyalty => 5,
-	financial_status => 3,
-	social_life => 8);
+my $citizens = GenerateCitizen::generate_citizens(3);
+my $diplomat = $citizens->[0];
+my $diplomat2 = $citizens->[1];
+my $agent = $citizens->[2];
 
 my $information = Event->new( 
 	type => 'event', 
@@ -39,6 +23,7 @@ $agent->learn($information);
 $diplomat->learn($information);
 $diplomat2->learn($information);
 
+
 print Dumper($player);
 
-#print find_type_constraint('Occupation')->{values}};
+#print Dumper(find_type_constraint('Occupation')->{values});
