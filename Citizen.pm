@@ -1,9 +1,14 @@
 package Citizen;
 use Moose;
 use Moose::Util::TypeConstraints;
+use MooseX::ClassAttribute;
+
+class_has 'attribute_min' =>( is => 'ro', isa => 'Int',default => 0);
+class_has 'attribute_max' =>( is => 'ro', isa => 'Int',default => 10);
 
 enum Occupation => [qw(diplomat chef shopkeeper)];
-subtype 'Attribute', as 'Int', where { $_ >= 0  && $_ <= 10};
+subtype 'Attribute', as 'Int', where { $_ >= Citizen->attribute_min  && $_ <= Citizen->attribute_max};
+
 
 has 'name' => (is => 'ro', isa => 'Str', required => '1');
 has 'age' => (is => 'ro', isa => 'Int', required => '1');

@@ -15,11 +15,14 @@ sub generate_citizens {
 
 	my @citizens = ();	
 	for(1..$number) {
+
+		my $attribute_span = Citizen->attribute_max - Citizen->attribute_min;
+
 		my $name = scalar(<$fh>);
-		my $age = int(rand(45)) + 20;
-		my $loyalty = int(rand(10));
-		my $financial_status = int(rand(10));
-		my $social_life = int(rand(10));
+		my $age = inclusive_int_rand(45) + 20;
+		my $loyalty = inclusive_int_rand($attribute_span) + Citizen->attribute_min;
+		my $financial_status = inclusive_int_rand($attribute_span) + Citizen->attribute_min;
+		my $social_life = inclusive_int_rand($attribute_span) + Citizen->attribute_min;
 		my $occupation = @$occupations[int(rand(scalar @$occupations))];
 		push(@citizens,Citizen->new(
 		name => $name,
