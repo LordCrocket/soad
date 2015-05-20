@@ -32,3 +32,9 @@ sub generate_citizens {
 
 	return \@ citizens;
 }
+
+
+sub inclusive_int_rand {
+	(my $range) = @_;
+	return int(rand($range +1);
+}
