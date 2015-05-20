@@ -3,6 +3,7 @@ use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::ClassAttribute;
 
+use namespace::autoclean;
 class_has 'attribute_min' =>( is => 'ro', isa => 'Int',default => 0);
 class_has 'attribute_max' =>( is => 'ro', isa => 'Int',default => 10);
 
@@ -29,5 +30,7 @@ sub learn {
 	(my $information) = @_;	
 	push(@{$self->known_information},$information);
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
