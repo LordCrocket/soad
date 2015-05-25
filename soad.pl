@@ -1,12 +1,18 @@
 use strict;
 use warnings;
+### Custom ###
 use Information;
 use Player;
 use Citizen;
 use GenerateCitizen;
 use Event;
+
+### Imports ###
 use Data::Dumper;
 use Moose::Util::TypeConstraints;
+use Log::Log4perl;
+
+Log::Log4perl::init_and_watch('log4perl.conf',10);
 
 my $citizens = GenerateCitizen::generate_citizens(3);
 my $diplomat = $citizens->[0];
@@ -25,5 +31,3 @@ $diplomat2->learn($information);
 
 
 print Dumper($player);
-
-#print Dumper(find_type_constraint('Occupation')->{values});

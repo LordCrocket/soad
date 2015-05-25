@@ -2,8 +2,11 @@ package Citizen;
 use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::ClassAttribute;
+use Log::Log4perl;
 
 use namespace::autoclean;
+
+my $logger = Log::Log4perl->get_logger('citizen');
 class_has 'attribute_min' =>( is => 'ro', isa => 'Int',default => 0);
 class_has 'attribute_max' =>( is => 'ro', isa => 'Int',default => 10);
 
