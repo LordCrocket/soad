@@ -7,6 +7,10 @@ use Log::Log4perl;
 use namespace::autoclean;
 
 my $logger = Log::Log4perl->get_logger('citizen');
+
+
+use overload '""' => "to_string", fallback => 1;
+
 class_has 'attribute_min' =>( is => 'ro', isa => 'Int',default => 0);
 class_has 'attribute_max' =>( is => 'ro', isa => 'Int',default => 10);
 
@@ -28,10 +32,17 @@ has 'known_information' => (
 	);
 1;
 
+
 sub learn {
-	my $self = shift;
-	(my $information) = @_;	
+	(my $self,my $information) = @_;
+	$logger->debug($self . " has learnt: " . $information);
 	push(@{$self->known_information},$information);
+}
+
+sub to_string {
+	my $self = shift;
+	my $string_rep = $self->name;
+	return $string_rep;
 }
 
 __PACKAGE__->meta->make_immutable;
