@@ -1,6 +1,7 @@
 package Event;
 use Moose;
 use namespace::autoclean;
+use MooseX::StrictConstructor;
 
 
 extends 'Information';

@@ -2,6 +2,7 @@ package Citizen;
 use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::ClassAttribute;
+use MooseX::StrictConstructor;
 use Log::Log4perl;
 use String::Trim;
 
@@ -25,9 +26,10 @@ has 'loyalty' => (is => 'ro', isa => 'Attribute', required => '1');
 has 'financial_status' => (is => 'ro', isa => 'Attribute', required => '1');
 has 'social_life' => (is => 'ro', isa => 'Attribute', required => '1');
 
-has 'known_information' => (
+has '_known_information' => (
 	is  => 'rw',
 	isa => 'ArrayRef[Information]',
+	init_arg => undef,
 	default => sub {[]}
 	);
 
@@ -39,8 +41,8 @@ sub _trim_and_set_name {
 
 sub learn {
 	(my $self,my $information) = @_;
+	push(@{$self->_known_information},$information);
 	$logger->debug($self . " has learnt: " . $information);
-	push(@{$self->known_information},$information);
 }
 
 sub to_string {

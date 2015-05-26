@@ -6,6 +6,7 @@ use Player;
 use Citizen;
 use GenerateCitizen;
 use Event;
+use GameState;
 
 ### Imports ###
 use Data::Dumper;
@@ -19,15 +20,15 @@ my $diplomat = $citizens->[0];
 my $diplomat2 = $citizens->[1];
 my $agent = $citizens->[2];
 
+my $game_state = GameState->new();
+
 my $information = Event->new( 
-	type => 'event', 
 	title => 'Informal dinner', 
 	participants => [$diplomat,$diplomat2]);
 
-my $player = Player->new(known_citizen => [$agent]);
+my $player = Player->new();
+$player->add_know_citizen($agent);
+$game_state->add_player($player);
 $agent->learn($information);
 $diplomat->learn($information);
 $diplomat2->learn($information);
-
-
-#print Dumper($player);
