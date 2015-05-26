@@ -3,6 +3,7 @@ use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::ClassAttribute;
 use Log::Log4perl;
+use String::Trim;
 
 use namespace::autoclean;
 
@@ -17,8 +18,7 @@ class_has 'attribute_max' =>( is => 'ro', isa => 'Int',default => 10);
 enum Occupation => [qw(diplomat chef shopkeeper)];
 subtype 'Attribute', as 'Int', where { $_ >= Citizen->attribute_min  && $_ <= Citizen->attribute_max};
 
-
-has 'name' => (is => 'ro', isa => 'Str', required => '1');
+has 'name' => (is => 'ro', isa => 'Str',writer => '_set_name', initializer => '_trim_and_set_name', required => '1');
 has 'age' => (is => 'ro', isa => 'Int', required => '1');
 has 'occupation' => (is => 'ro', isa => 'Occupation', required => '1');
 has 'loyalty' => (is => 'ro', isa => 'Attribute', required => '1');
@@ -30,8 +30,12 @@ has 'known_information' => (
 	isa => 'ArrayRef[Information]',
 	default => sub {[]}
 	);
-1;
 
+
+sub _trim_and_set_name {
+	(my $self,my $name) = @_;
+	$self->_set_name(trim($name));
+}
 
 sub learn {
 	(my $self,my $information) = @_;

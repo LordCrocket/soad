@@ -3,7 +3,6 @@ use Citizen;
 
 my $names_file = 'names';
 use Moose::Util::TypeConstraints;
-use String::Trim;
 
 
 sub generate_citizens {
@@ -17,7 +16,7 @@ sub generate_citizens {
 	my @citizens = ();	
 	for(1..$number) {
 		push(@citizens,Citizen->new(
-			name => trim(scalar(<$fh>)),
+			name => scalar(<$fh>),
 			age => inclusive_int_rand(45) + 20,
 			occupation => @$occupations[int(rand(scalar @$occupations))],
 			loyalty => generate_attribute(),

@@ -30,4 +30,4 @@ $diplomat->learn($information);
 $diplomat2->learn($information);
 
 
-print Dumper($player);
+#print Dumper($player);
