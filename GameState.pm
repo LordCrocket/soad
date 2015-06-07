@@ -57,6 +57,12 @@ sub add_information {
 	(my $self,my $information) = @_;
 	push(@{$self->_information},$information);
 	$logger->debug("Information: " . $information  . " was added to " . $self);
+	if($information->does('Participation')){
+		foreach my $participant ($information->get_participants()){
+			$participant->learn($information);
+		}
+
+	}
 }
 
 sub _citizen_exists {
