@@ -40,7 +40,7 @@ sub add_know_citizen {
 	$logger->debug("Player: " .$self." now knows " . $citizen);
 }
 sub to_string {
-	my $self = shift;
+	(my $self) = @_;
 	return $self->id;
 }
 

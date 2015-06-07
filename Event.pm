@@ -10,7 +10,7 @@ has 'participants' => (is => 'ro', isa => 'ArrayRef[Citizen]',required => '0');
 use overload '""' => "to_string", fallback => 1;
 
 sub to_string {
-	my $self = shift;
+	(my $self) = @_;
 	return $self->id . " (Event) " .$self->title . " Participants: " . join (', ',@{$self->participants});
 }
 

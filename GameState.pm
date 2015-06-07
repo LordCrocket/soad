@@ -88,7 +88,7 @@ sub add_known_citizen {
 }
 
 sub to_string {
-	my $self = shift;
+	(my $self) = @_;
 	return "Game: " . $self->id;
 }
 

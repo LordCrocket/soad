@@ -48,7 +48,7 @@ sub learn {
 }
 
 sub to_string {
-	my $self = shift;
+	(my $self) = @_;
 	my $string_rep = $self->name;
 	return $string_rep;
 }
