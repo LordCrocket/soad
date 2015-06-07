@@ -1,5 +1,5 @@
-use strict;
-use warnings;
+use strict; use warnings;
+use 5.20.0;
 ### Custom ###
 use Information;
 use Player;
@@ -7,6 +7,7 @@ use Citizen;
 use GenerateCitizen;
 use Event;
 use GameState;
+use experimental 'smartmatch';
 
 ### Imports ###
 use Data::Dumper;
@@ -25,10 +26,23 @@ my $game_state = GameState->new();
 my $information = Event->new( 
 	title => 'Informal dinner', 
 	participants => [$diplomat,$diplomat2]);
+my $information2 = Event->new( 
+	title => 'Meeting at hotel', 
+	participants => [$diplomat,$diplomat2]);
 
 my $player = Player->new();
-$player->add_know_citizen($agent);
+
 $game_state->add_player($player);
-$agent->learn($information);
-$diplomat->learn($information);
-$diplomat2->learn($information);
+
+$game_state->add_citizen($agent);
+$game_state->add_citizen($diplomat);
+$game_state->add_citizen($diplomat2);
+
+$game_state->add_information($information);
+
+$game_state->learn($agent,$information);
+$game_state->learn($diplomat,$information);
+$game_state->learn($diplomat2,$information);
+
+
+

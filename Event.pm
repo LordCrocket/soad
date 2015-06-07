@@ -11,9 +11,10 @@ use overload '""' => "to_string", fallback => 1;
 
 sub to_string {
 	my $self = shift;
-	my $string_rep = "(Event) ".$self->title . " Participants: " . join (', ',@{$self->participants});
-	return $string_rep;
+	return $self->id . " (Event) " .$self->title . " Participants: " . join (', ',@{$self->participants});
 }
+
+
 
 __PACKAGE__->meta->make_immutable;
  1;
