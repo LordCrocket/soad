@@ -1,7 +1,7 @@
 use strict; 
 use warnings;
 use Test::More tests => 8;
-use 5.20.0;
+use 5.18.0;
 ### Custom ###
 use Information;
 use Player;
