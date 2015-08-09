@@ -16,6 +16,9 @@ use Moose::Util::TypeConstraints;
 use Log::Log4perl;
 
 Log::Log4perl::init_and_watch('log4perl.conf',10);
+my $logger = Log::Log4perl->get_logger('soad');
+
+$logger->debug("Seed is: " . srand());
 
 my $citizens = GenerateCitizen::generate_citizens(3);
 my $diplomat = $citizens->[0];
