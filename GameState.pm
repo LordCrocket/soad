@@ -5,6 +5,8 @@ use MooseX::ClassAttribute;
 use namespace::autoclean;
 use experimental 'smartmatch';
 use Data::Dumper;
+use Storable qw(dclone);
+
 
 my $logger = Log::Log4perl->get_logger('gamestate');
 
@@ -63,6 +65,11 @@ sub add_information {
 		}
 
 	}
+}
+
+sub get_citizens {
+	(my $self) = @_;
+	return dclone($self->_citizens);
 }
 
 sub _citizen_exists {
