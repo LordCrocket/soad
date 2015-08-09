@@ -1,6 +1,6 @@
 use strict; 
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 2;
 use 5.18.0;
 ### Custom ###
 use Information;
@@ -15,6 +15,7 @@ use Data::Dumper;
 Log::Log4perl::init_and_watch('t/log4perl.conf',10);
 
 
+### Setup ###
 my $citizens = GenerateCitizen::generate_citizens(4);
 my $diplomat = $citizens->[0];
 my $diplomat2 = $citizens->[1];
@@ -40,21 +41,33 @@ foreach my $citizen (@citizens) {
 }
 
 $game_state->add_information($information);
-
-
-is(@{$game_state->_citizens},@citizens,$game_state ." should contain " . @citizens . " number of citizens");
-ok(contains_citizen($game_state,$agent),$game_state . " should contain " . $agent);
-ok(contains_citizen($game_state,$diplomat),$game_state . " should contain " . $diplomat);
-ok(contains_citizen($game_state,$diplomat2),$game_state . " should contain " . $diplomat2);
-ok(!contains_citizen($game_state,$citizen_not_added),$game_state . " should NOT contain " . $citizen_not_added);
-
-
 $game_state->learn($agent,$information);
 
-$agent->_known_information;
-ok(knows_information($agent,$information), $agent . " should have leart: " . $information);
-ok(knows_information($diplomat,$information),"Participant " . $diplomat . " should have learnt: " . $information);
-ok(knows_information($diplomat2,$information), "Participant " . $diplomat2 . " should  have learnt: " . $information);
+
+############
+
+
+subtest 'Citizens added to gamestate' => sub {
+      plan tests => 5;
+	is(@{$game_state->_citizens},@citizens,$game_state ." should contain " . @citizens . " number of citizens");
+	ok(contains_citizen($game_state,$agent),$game_state . " should contain " . $agent);
+	ok(contains_citizen($game_state,$diplomat),$game_state . " should contain " . $diplomat);
+	ok(contains_citizen($game_state,$diplomat2),$game_state . " should contain " . $diplomat2);
+	ok(!contains_citizen($game_state,$citizen_not_added),$game_state . " should NOT contain " . $citizen_not_added);
+};
+
+
+
+subtest 'Event participation' => sub {
+      plan tests => 3;
+	ok(knows_information($agent,$information), $agent . " should have leart: " . $information);
+	ok(knows_information($diplomat,$information),"Participant " . $diplomat . " should have learnt: " . $information);
+	ok(knows_information($diplomat2,$information), "Participant " . $diplomat2 . " should  have learnt: " . $information);
+};
+
+
+
+### Help functions ###
 
 sub knows_information {
 	(my $citizen,my $information) = @_;
