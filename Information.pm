@@ -1,7 +1,7 @@
 package Information;
 use Moose;
-use MooseX::ABC;
 use MooseX::ClassAttribute;
+use MooseX::ABC;
 use namespace::autoclean;
 
 
