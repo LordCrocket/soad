@@ -84,10 +84,10 @@ sub _information_exists {
 
 sub learn {
 	(my $self,my $citizen,my $information) = @_;
-	if(not _citizen_exists($self,$citizen)){
+	if(not $self->_citizen_exists($citizen)){
 		$logger->error("Citizen: " . $citizen  . " does not exits in: "  . $self);
 	}
-	elsif(not _information_exists($self,$information)){
+	elsif(not $self->_information_exists($information)){
 		$logger->error("Information: " . $information  . " does not exits in: "  . $self);
 	}
 	else {

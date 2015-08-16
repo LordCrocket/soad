@@ -7,6 +7,7 @@ use Player;
 use Citizen;
 use GenerateCitizen;
 use Event;
+use EventGenerator;
 use GameState;
 use experimental 'smartmatch';
 
@@ -48,5 +49,5 @@ $game_state->learn($agent,$information);
 $game_state->learn($diplomat,$information);
 $game_state->learn($diplomat2,$information);
 
-
-
+my $event_generator = EventGenerator->new();
+$event_generator->update_game_state($game_state);
