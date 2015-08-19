@@ -16,7 +16,8 @@ Log::Log4perl::init_and_watch('t/log4perl.conf',10);
 
 
 ### Setup ###
-my $citizens = GenerateCitizen::generate_citizens(4);
+my $citizen_generator = GenerateCitizen->new(number_of_citizens => 4);
+my $citizens = $citizen_generator->_generate_citizens();
 my $diplomat = $citizens->[0];
 my $diplomat2 = $citizens->[1];
 my $agent = $citizens->[2];

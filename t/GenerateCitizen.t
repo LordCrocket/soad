@@ -7,11 +7,14 @@ use 5.18.0;
 use GenerateCitizen;
 
 my $seed = srand();
-my $citizensFirstRound = GenerateCitizen::generate_citizens(1);
+my $first_citizen_generator = GenerateCitizen->new(number_of_citizens => 1);
+
+my $citizensFirstRound = $first_citizen_generator->_generate_citizens();
 my $citizen1 = $citizensFirstRound->[0];
 
 srand($seed);
-my $citizensSecondRound = GenerateCitizen::generate_citizens(1);
+my $second_citizen_generator = GenerateCitizen->new(number_of_citizens => 1);
+my $citizensSecondRound = $second_citizen_generator->_generate_citizens();
 my $citizen2 = $citizensSecondRound->[0];
 
 
@@ -26,4 +29,3 @@ subtest 'Same seed generation' => sub {
 	is($citizen1->social_life,$citizen2->social_life, "Check same social life");
 
 };
-
