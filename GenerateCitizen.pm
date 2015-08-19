@@ -12,14 +12,14 @@ my $logger = Log::Log4perl->get_logger('generatecitizen');
 has 'number_of_citizens' => (is => 'ro', isa => 'Attribute', required => '1');
 
 sub _generate_citizens {
-	(my $self, my $number) = @_;	
+	(my $self) = @_;	
 
 	my $occupations = find_type_constraint('Occupation')->{values};
 
 	seek DATA,0,0;
 
 	my @citizens = ();	
-	for(1..$number) {
+	for(1..$self->number_of_citizens) {
 		push(@citizens,Citizen->new(
 			name => scalar(<DATA>),
 			age => $self->_inclusive_int_rand(45) + 20,
@@ -30,6 +30,7 @@ sub _generate_citizens {
 			)
 		);
 	}
+
 
 	return \@ citizens;
 }
@@ -51,7 +52,7 @@ override 'setup' => sub {
 
 	$logger->debug("Generating citizens");
 
-	my $citizens = $self->_generate_citizens($self->number_of_citizens); 
+	my $citizens = $self->_generate_citizens(); 
 	foreach my $citizen (@{$citizens}) {
 		$game_state->add_citizen($citizen);
 	}
