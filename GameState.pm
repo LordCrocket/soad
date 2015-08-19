@@ -44,6 +44,10 @@ has '_information' => (
 	default => sub {[]}
 	);
 
+sub BUILD {
+	(my $self) = @_;
+	$logger->debug($self . " created"); 
+}
 
 sub add_player {
 	(my $self,my $player) = @_;
