@@ -4,6 +4,7 @@ use MooseX::ClassAttribute;
 use MooseX::ABC;
 use namespace::autoclean;
 
+sub setup {} 
 sub update_game_state {} 
 
 
