@@ -16,6 +16,8 @@ sub _generate_citizens {
 
 	my $occupations = find_type_constraint('Occupation')->{values};
 
+	seek DATA,0,0;
+
 	my @citizens = ();	
 	for(1..$number) {
 		push(@citizens,Citizen->new(
