@@ -14,9 +14,9 @@ has 'number_of_citizens' => (is => 'ro', isa => 'Attribute', required => '1');
 sub _generate_citizens {
 	(my $self) = @_;	
 
-	my $occupations = find_type_constraint('Occupation')->{values};
+	my $data_pos =  tell(DATA);
 
-	seek DATA,0,0;
+	my $occupations = find_type_constraint('Occupation')->{values};
 
 	my @citizens = ();	
 	for(1..$self->number_of_citizens) {
@@ -31,6 +31,7 @@ sub _generate_citizens {
 		);
 	}
 
+	seek(DATA,$data_pos,0);
 
 	return \@ citizens;
 }
