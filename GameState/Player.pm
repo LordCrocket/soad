@@ -1,4 +1,4 @@
-package Player;
+package GameState::Player;
 use Moose;
 use MooseX::StrictConstructor;
 use MooseX::ClassAttribute;
@@ -20,7 +20,7 @@ class_has 'counter' => (
           reset_counter => 'reset',
       },
   );
-has 'id' => (is => 'ro', isa => 'Int',required => '0',default => sub { return Player->inc_counter;});
+has 'id' => (is => 'ro', isa => 'Int',required => '0',default => sub { return GameState::Player->inc_counter;});
 has '_known_information' => (
 	is  => 'ro',
 	isa => 'ArrayRef[Information]',

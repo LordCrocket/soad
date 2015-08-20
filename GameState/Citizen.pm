@@ -1,4 +1,4 @@
-package Citizen;
+package GameState::Citizen;
 use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::ClassAttribute;
@@ -19,7 +19,7 @@ class_has 'attribute_min' =>( is => 'ro', isa => 'Int',default => 0);
 class_has 'attribute_max' =>( is => 'ro', isa => 'Int',default => 10);
 
 enum Occupation => [qw(diplomat chef shopkeeper)];
-subtype 'Attribute', as 'Int', where { $_ >= Citizen->attribute_min  && $_ <= Citizen->attribute_max};
+subtype 'Attribute', as 'Int', where { $_ >= GameState::Citizen->attribute_min  && $_ <= GameState::Citizen->attribute_max};
 
 has 'name' => (is => 'ro', isa => 'Str',writer => '_set_name', initializer => '_trim_and_set_name', required => '1');
 has 'age' => (is => 'ro', isa => 'Int', required => '1');

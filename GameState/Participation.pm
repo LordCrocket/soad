@@ -1,4 +1,4 @@
-package Participation;
+package GameState::Participation;
 use Moose::Role;
 
 requires 'get_participants';

@@ -1,4 +1,4 @@
-package Information;
+package GameState::Information;
 use Moose;
 use MooseX::ClassAttribute;
 use MooseX::ABC;
@@ -18,7 +18,7 @@ class_has 'counter' => (
           reset_counter => 'reset',
       },
   );
-has 'id' => (is => 'ro', isa => 'Int',required => '0',default => sub { return Information->inc_counter;});
+has 'id' => (is => 'ro', isa => 'Int',required => '0',default => sub { return GameState::Information->inc_counter;});
 has 'title' => (is => 'ro', isa => 'Str', required => '1');
 has 'desc' => (is => 'ro', isa => 'Str', required => '0');
 

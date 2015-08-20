@@ -3,7 +3,6 @@ use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::StrictConstructor;
 use Readonly;
-use Event;
 extends 'GameModule';
 
 my $logger = Log::Log4perl->get_logger('eventgenerator');
@@ -38,8 +37,7 @@ sub _generate_event {
 	my $citizens = $game_state->get_citizens();	
 	(my $citizen1, my $citizen2) = $self->_get_two_random_citizens($citizens);
 	my $title = $self->_get_random_event_title(); 
-	my $event = Event->new(title => $title, participants => [$citizen1,$citizen2]);
-	$game_state->add_information($event);
+	$game_state->add_event($title,[$citizen1,$citizen2]);
 
 }
 

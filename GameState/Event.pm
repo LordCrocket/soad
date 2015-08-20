@@ -1,12 +1,12 @@
-package Event;
+package GameState::Event;
 use Moose;
 use namespace::autoclean;
 use MooseX::StrictConstructor;
 
-with 'Participation';
+with 'GameState::Participation';
 
-extends 'Information';
-has 'participants' => (is => 'ro', isa => 'ArrayRef[Citizen]',required => '0');
+extends 'GameState::Information';
+has 'participants' => (is => 'ro', isa => 'ArrayRef[GameState::Citizen]',required => '0');
 
 use overload '""' => "to_string", fallback => 1;
 

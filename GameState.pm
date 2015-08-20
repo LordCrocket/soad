@@ -1,12 +1,16 @@
 package GameState;
 use Moose;
 use MooseX::StrictConstructor;
+use Moose::Util::TypeConstraints;
 use MooseX::ClassAttribute;
-use namespace::autoclean;
 use experimental 'smartmatch';
 use Data::Dumper;
 use Storable qw(dclone);
+use GameState::Citizen;
+use GameState::Player;
+use GameState::Event;
 
+use namespace::autoclean;
 
 my $logger = Log::Log4perl->get_logger('gamestate');
 
@@ -27,19 +31,19 @@ class_has 'counter' => (
 has 'id' => (is => 'ro', isa => 'Int',required => '0',default => sub { return GameState->inc_counter;});
 has '_players' => (
 	is  => 'ro',
-	isa => 'ArrayRef[Player]',
+	isa => 'ArrayRef[GameState::Player]',
 	init_arg => undef,
 	default => sub {[]}
 	);
 has '_citizens' => (
 	is  => 'ro',
-	isa => 'ArrayRef[Citizen]',
+	isa => 'ArrayRef[GameState::Citizen]',
 	init_arg => undef,
 	default => sub {[]}
 	);
 has '_information' => (
 	is  => 'ro',
-	isa => 'ArrayRef[Information]',
+	isa => 'ArrayRef[GameState::Information]',
 	init_arg => undef,
 	default => sub {[]}
 	);
@@ -50,16 +54,26 @@ sub BUILD {
 }
 
 sub add_player {
-	(my $self,my $player) = @_;
+	(my $self) = @_;
+	my $player = GameState::Player->new();
 	push(@{$self->_players},$player);
 	$logger->debug("Player: " . $player  . " was added to " . $self);
 }
 sub add_citizen {
-	(my $self,my $citizen) = @_;
+	(my $self,my $citizen_hash) = @_;
+	my $citizen = GameState::Citizen->new($citizen_hash);	
 	push(@{$self->_citizens},$citizen);
 	$logger->debug("Citizen: " . $citizen  . " was added to " . $self);
 }
-sub add_information {
+
+sub add_event {
+	(my $self,my $title,my $citizens) = @_;
+	my $event = GameState::Event->new(title => $title, participants => $citizens);
+	$self->_add_information($event);
+	return $event->id;
+}
+
+sub _add_information {
 	(my $self,my $information) = @_;
 	push(@{$self->_information},$information);
 	$logger->debug("Information: " . $information  . " was added to " . $self);
@@ -75,10 +89,22 @@ sub get_citizens {
 	(my $self) = @_;
 	return dclone($self->_citizens);
 }
+sub get_citizens_attribute_max {
+	return GameState::Citizen->attribute_max;
+}
+
+sub get_citizens_attribute_min {
+	return GameState::Citizen->attribute_min;
+}
 
 sub _citizen_exists {
 	(my $self,my $citizen) = @_;
 	return $citizen ~~ $self->_citizens;
+}
+
+sub get_occupations {
+	(my $self) = @_;
+	return find_type_constraint('Occupation')->{values};
 }
 
 sub _information_exists {

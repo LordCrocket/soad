@@ -1,33 +1,33 @@
 package GenerateCitizen;
-use Citizen;
 use Moose;
 use MooseX::StrictConstructor;
-use Moose::Util::TypeConstraints;
 use namespace::autoclean;
 
 extends 'GameModule';
 
 my $logger = Log::Log4perl->get_logger('generatecitizen');
 
-has 'number_of_citizens' => (is => 'ro', isa => 'Attribute', required => '1');
+has 'number_of_citizens' => (is => 'ro', isa => 'Int', required => '1');
 
 sub _generate_citizens {
-	(my $self) = @_;	
+	(my $self, my $game_state) = @_;	
 
 	my $data_pos =  tell(DATA);
+	my $occupations = $game_state->get_occupations();
 
-	my $occupations = find_type_constraint('Occupation')->{values};
+	my $min = $game_state->get_citizens_attribute_min();
+	my $max = $game_state->get_citizens_attribute_max();
 
 	my @citizens = ();	
 	for(1..$self->number_of_citizens) {
-		push(@citizens,Citizen->new(
+		push(@citizens,{
 			name => scalar(<DATA>),
 			age => $self->_inclusive_int_rand(45) + 20,
 			occupation => @$occupations[int(rand(scalar @$occupations))],
-			loyalty => $self->_generate_attribute(),
-			financial_status => $self->_generate_attribute(),
-			social_life => $self->_generate_attribute()
-			)
+			loyalty => $self->_generate_attribute($min,$max),
+			financial_status => $self->_generate_attribute($min,$max),
+			social_life => $self->_generate_attribute($min,$max)
+			}
 		);
 	}
 
@@ -37,9 +37,9 @@ sub _generate_citizens {
 }
 
 sub _generate_attribute {
-	(my $self) = @_;
-	my $attribute_span = Citizen->attribute_max - Citizen->attribute_min;
-	return $self->_inclusive_int_rand($attribute_span) + Citizen->attribute_min;
+	(my $self, my $attribute_min, my $attribute_max) = @_;
+	my $attribute_span = $attribute_max - $attribute_min;
+	return $self->_inclusive_int_rand($attribute_span) + $attribute_min;
 }
 
 
@@ -53,7 +53,7 @@ override 'setup' => sub {
 
 	$logger->debug("Generating citizens");
 
-	my $citizens = $self->_generate_citizens(); 
+	my $citizens = $self->_generate_citizens($game_state); 
 	foreach my $citizen (@{$citizens}) {
 		$game_state->add_citizen($citizen);
 	}

@@ -3,46 +3,44 @@ use warnings;
 use Test::More tests => 2;
 use 5.18.0;
 ### Custom ###
-use Information;
-use Player;
-use Citizen;
+use GameState::Information;
+use GameState::Player;
+use GameState::Citizen;
+use GameState::Event;
 use GenerateCitizen;
-use Event;
 use GameState;
 use experimental 'smartmatch';
 use Log::Log4perl;
 use Data::Dumper;
 Log::Log4perl::init_and_watch('t/log4perl.conf',10);
 
-
 ### Setup ###
-my $citizen_generator = GenerateCitizen->new(number_of_citizens => 4);
-my $citizens = $citizen_generator->_generate_citizens();
+
+my $game_state = GameState->new();
+my $occupations = $game_state->get_occupations();
+
+my $citizen_generator = GenerateCitizen->new(number_of_citizens => 3);
+$citizen_generator = $citizen_generator->setup($game_state);
+my $citizens = $game_state->get_citizens();
 my $diplomat = $citizens->[0];
 my $diplomat2 = $citizens->[1];
 my $agent = $citizens->[2];
-my $citizen_not_added = $citizens->[3];
+my $citizen_not_added = GameState::Citizen->new( name => "Kalle Kula"
+						 , age  => 8
+						 , occupation  => 'chef'
+						 , loyalty  => 5
+						 , financial_status  => 5
+						 , social_life  => 5
+					    );
 
-my $game_state = GameState->new();
 
-my $information = Event->new( 
-	title => 'Informal dinner', 
-	participants => [$diplomat,$diplomat2]);
-my $information2 = Event->new( 
-	title => 'Meeting at hotel', 
-	participants => [$agent,$citizen_not_added]);
+my $event_id = $game_state->add_event('Informal dinner',[$diplomat,$diplomat2]);
+my $event_id2 = $game_state->add_event('Informal dinner',[$diplomat,$diplomat2]);
 
-my $player = Player->new();
+my $information = $game_state->get_information($event_id);
+$game_state->add_event('Meeting at hotel',[$agent,$citizen_not_added]);
 
-$game_state->add_player($player);
-
-my @citizens = ($agent,$diplomat,$diplomat2);
-foreach my $citizen (@citizens) {
-	$game_state->add_citizen($citizen);
-}
-
-$game_state->add_information($information);
-$game_state->learn($agent,$information);
+$game_state->learn($agent,$event_id);
 
 
 ############
@@ -50,7 +48,7 @@ $game_state->learn($agent,$information);
 
 subtest 'Citizens added to gamestate' => sub {
       plan tests => 5;
-	is(@{$game_state->_citizens},@citizens,$game_state ." should contain " . @citizens . " number of citizens");
+	is(@{$game_state->_citizens},@$citizens,$game_state ." should contain " . @$citizens . " number of citizens");
 	ok(contains_citizen($game_state,$agent),$game_state . " should contain " . $agent);
 	ok(contains_citizen($game_state,$diplomat),$game_state . " should contain " . $diplomat);
 	ok(contains_citizen($game_state,$diplomat2),$game_state . " should contain " . $diplomat2);
@@ -78,4 +76,8 @@ sub knows_information {
 sub contains_citizen {
 	(my $game_state,my $citizen) = @_;
 	return grep($_->name eq $citizen->name,@{$game_state->_citizens})
+}
+sub generate_citizen {
+	(my $citizen_hash) = @_;
+	return GameState::Citizen->new($citizen_hash);	
 }

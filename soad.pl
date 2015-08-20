@@ -2,11 +2,7 @@ use strict;
 use warnings;
 use 5.20.0;
 ### Custom ###
-use Information;
-use Player;
-use Citizen;
 use GenerateCitizen;
-use Event;
 use EventGenerator;
 use GameState;
 use experimental 'smartmatch';
@@ -25,9 +21,7 @@ my $game_state = GameState->new();
 my $citizen_generator = GenerateCitizen->new(number_of_citizens => 3);
 $citizen_generator->setup($game_state);
 
-my $player = Player->new();
-
-$game_state->add_player($player);
+$game_state->add_player();
 
 my $event_generator = EventGenerator->new();
 $event_generator->update_game_state($game_state);
