@@ -32,21 +32,33 @@ has 'id' => (is => 'ro', isa => 'Int',required => '0',default => sub { return Ga
 has '_players' => (
 	is  => 'ro',
 	isa => 'ArrayRef[GameState::Player]',
+	traits  => ['Array'],
 	init_arg => undef,
-	default => sub {[]}
-	);
+	default => sub {[]},
+	handles => {
+		_add_player  => 'push'
+	}
+);
 has '_citizens' => (
 	is  => 'ro',
 	isa => 'ArrayRef[GameState::Citizen]',
+	traits  => ['Array'],
 	init_arg => undef,
-	default => sub {[]}
-	);
+	default => sub {[]},
+	handles => {
+		_add_citizen  => 'push'
+	}
+);
 has '_information' => (
 	is  => 'ro',
-	isa => 'ArrayRef[GameState::Information]',
+	isa => 'HashRef[GameState::Information]',
+	traits => ['Hash'],
 	init_arg => undef,
-	default => sub {[]}
-	);
+	default => sub {{}},
+	handles => {
+		_set_information  => 'set'
+	}
+);
 
 sub BUILD {
 	(my $self) = @_;
@@ -56,13 +68,13 @@ sub BUILD {
 sub add_player {
 	(my $self) = @_;
 	my $player = GameState::Player->new();
-	push(@{$self->_players},$player);
+	$self->_add_player($player);
 	$logger->debug("Player: " . $player  . " was added to " . $self);
 }
 sub add_citizen {
 	(my $self,my $citizen_hash) = @_;
 	my $citizen = GameState::Citizen->new($citizen_hash);	
-	push(@{$self->_citizens},$citizen);
+	$self->_add_citizen($citizen);
 	$logger->debug("Citizen: " . $citizen  . " was added to " . $self);
 }
 
@@ -75,14 +87,19 @@ sub add_event {
 
 sub _add_information {
 	(my $self,my $information) = @_;
-	push(@{$self->_information},$information);
+	$self->_set_information($information->id,$information);
 	$logger->debug("Information: " . $information  . " was added to " . $self);
-	if($information->does('Participation')){
+	if($information->does('GameState::Participation')){
 		foreach my $participant ($information->get_participants()){
 			$participant->learn($information);
 		}
 
 	}
+}
+
+sub get_information {
+	(my $self,my $information_id) = @_;
+	return $self->_information->{$information_id};
 }
 
 sub get_citizens {
@@ -109,16 +126,17 @@ sub get_occupations {
 
 sub _information_exists {
 	(my $self,my $information) = @_;
-	return $information ~~ $self->_information;
+	return defined $self->_information->{$information->id};
 }
 
 sub learn {
-	(my $self,my $citizen,my $information) = @_;
+	(my $self,my $citizen,my $information_id) = @_;
+	my $information = $self->get_information($information_id);
 	if(not $self->_citizen_exists($citizen)){
-		$logger->error("Citizen: " . $citizen  . " does not exits in: "  . $self);
+		$logger->warn("Citizen: " . $citizen  . " does not exits in: "  . $self);
 	}
 	elsif(not $self->_information_exists($information)){
-		$logger->error("Information: " . $information  . " does not exits in: "  . $self);
+		$logger->warn("Information: " . $information  . " does not exits in: "  . $self);
 	}
 	else {
 		$citizen->learn($information);

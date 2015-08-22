@@ -30,10 +30,14 @@ has 'social_life' => (is => 'ro', isa => 'Attribute', required => '1');
 
 has '_known_information' => (
 	is  => 'rw',
-	isa => 'ArrayRef[Information]',
+	isa => 'ArrayRef[GameState::Information]',
+	traits  => ['Array'],
 	init_arg => undef,
-	default => sub {[]}
-	);
+	default => sub {[]},
+	handles => {
+		_add_known_information  => 'push'
+	}
+);
 
 
 sub _trim_and_set_name {
@@ -43,7 +47,7 @@ sub _trim_and_set_name {
 
 sub learn {
 	(my $self,my $information) = @_;
-	push(@{$self->_known_information},$information);
+	$self->_add_known_information($information);
 	$logger->debug($self . " has learnt: " . $information);
 }
 

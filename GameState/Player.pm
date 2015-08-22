@@ -23,20 +23,30 @@ class_has 'counter' => (
 has 'id' => (is => 'ro', isa => 'Int',required => '0',default => sub { return GameState::Player->inc_counter;});
 has '_known_information' => (
 	is  => 'ro',
-	isa => 'ArrayRef[Information]',
+	isa => 'ArrayRef[GameState::Information]',
+	traits  => ['Array'],
 	init_arg => undef,
 	default => sub {[]},
-	);
+	handles => {
+		_add_known_information  => 'push'
+	}
+);
+
 has '_known_citizen' => (
 	is  => 'ro',
-	isa => 'ArrayRef[Citizen]',
+	isa => 'ArrayRef[GameState::Citizen]',
+	traits  => ['Array'],
 	init_arg => undef,
 	default => sub {[]},
-	);
+
+	handles => {
+		_add_known_citizen  => 'push'
+	}
+);
 
 sub add_know_citizen {
 	(my $self,my $citizen) = @_;
-	push(@{$self->_known_citizen},$citizen);
+	$self->_add_known_citizen($citizen);
 	$logger->debug("Player: " .$self." now knows " . $citizen);
 }
 sub to_string {
