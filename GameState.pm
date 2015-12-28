@@ -6,6 +6,7 @@ use MooseX::ClassAttribute;
 use experimental 'smartmatch';
 use Data::Dumper;
 use Storable qw(dclone);
+use List::Util qw(first);
 use GameState::Citizen;
 use GameState::Player;
 use GameState::Event;
@@ -36,7 +37,7 @@ has '_players' => (
 	init_arg => undef,
 	default => sub {[]},
 	handles => {
-		_add_player  => 'push'
+		_push_player  => 'push'
 	}
 );
 has '_citizens' => (
@@ -46,17 +47,17 @@ has '_citizens' => (
 	init_arg => undef,
 	default => sub {[]},
 	handles => {
-		_add_citizen  => 'push'
+		_push_citizen  => 'push'
 	}
 );
 has '_information' => (
 	is  => 'ro',
-	isa => 'HashRef[GameState::Information]',
-	traits => ['Hash'],
+	isa => 'ArrayRef[GameState::Information]',
+	traits => ['Array'],
 	init_arg => undef,
-	default => sub {{}},
+	default => sub {[]},
 	handles => {
-		_set_information  => 'set'
+		_push_information  => 'push'
 	}
 );
 
@@ -68,26 +69,41 @@ sub BUILD {
 sub add_player {
 	(my $self) = @_;
 	my $player = GameState::Player->new();
-	$self->_add_player($player);
+	$self->_push_player($player);
 	$logger->debug("Player: " . $player  . " was added to " . $self);
 }
 sub add_citizen {
 	(my $self,my $citizen_hash) = @_;
 	my $citizen = GameState::Citizen->new($citizen_hash);	
-	$self->_add_citizen($citizen);
+	$self->_push_citizen($citizen);
 	$logger->debug("Citizen: " . $citizen  . " was added to " . $self);
 }
 
 sub add_event {
 	(my $self,my $title,my $citizens) = @_;
-	my $event = GameState::Event->new(title => $title, participants => $citizens);
+	my $event = GameState::Event->new(title => $title, participants => $self->_get_citizens_that_exists($citizens));
 	$self->_add_information($event);
-	return $event->id;
+	return $event;
+}
+
+sub _get_citizens_that_exists {
+	(my $self, my $potential_citizens) = @_;
+	my @citizens = ();
+	foreach my $citizen (@{$potential_citizens}){
+		my $internal_citizen = $self->_get_citizen($citizen);
+		if ($internal_citizen){
+			push(@citizens,$internal_citizen);
+		}
+		else {
+			$logger->warn("Citizen: " . $citizen . " does not exists in " . $self);
+		}
+	} 
+	return \@citizens;
 }
 
 sub _add_information {
 	(my $self,my $information) = @_;
-	$self->_set_information($information->id,$information);
+	$self->_push_information($information);
 	$logger->debug("Information: " . $information  . " was added to " . $self);
 	if($information->does('GameState::Participation')){
 		foreach my $participant ($information->get_participants()){
@@ -98,13 +114,13 @@ sub _add_information {
 }
 
 sub get_information {
-	(my $self,my $information_id) = @_;
-	return $self->_information->{$information_id};
+	(my $self,my $information) = @_;
+	return first { $_ eq $information  } @{$self->_information};
 }
 
 sub get_citizens {
 	(my $self) = @_;
-	return dclone($self->_citizens);
+	return dclone($self->_citizens); 
 }
 sub get_citizens_attribute_max {
 	return GameState::Citizen->attribute_max;
@@ -115,8 +131,13 @@ sub get_citizens_attribute_min {
 }
 
 sub _citizen_exists {
-	(my $self,my $citizen) = @_;
-	return $citizen ~~ $self->_citizens;
+        (my $self,my $citizen) = @_;
+        return $citizen ~~ $self->_citizens;
+}
+
+sub _get_citizen {
+        (my $self,my $citizen) = @_;
+	return first { $_ eq $citizen  } @{$self->_citizens};
 }
 
 sub get_occupations {
@@ -126,20 +147,22 @@ sub get_occupations {
 
 sub _information_exists {
 	(my $self,my $information) = @_;
-	return defined $self->_information->{$information->id};
+        return $information ~~ $self->_information;
 }
 
 sub learn {
-	(my $self,my $citizen,my $information_id) = @_;
-	my $information = $self->get_information($information_id);
-	if(not $self->_citizen_exists($citizen)){
+	(my $self,my $citizen,my $information) = @_;
+	my $internal_citizen = $self->_get_citizen($citizen);
+	my $internal_information = $self->get_information($information);
+
+	if(! $internal_citizen){
 		$logger->warn("Citizen: " . $citizen  . " does not exits in: "  . $self);
 	}
-	elsif(not $self->_information_exists($information)){
+	elsif(! $internal_information){
 		$logger->warn("Information: " . $information  . " does not exits in: "  . $self);
 	}
 	else {
-		$citizen->learn($information);
+		$internal_citizen->learn($information);
 	}
 }
 

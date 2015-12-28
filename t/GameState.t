@@ -34,13 +34,13 @@ my $citizen_not_added = GameState::Citizen->new( name => "Kalle Kula"
 					    );
 
 
-my $event_id = $game_state->add_event('Informal dinner',[$diplomat,$diplomat2]);
-my $event_id2 = $game_state->add_event('Informal dinner',[$diplomat,$diplomat2]);
+my $event = $game_state->add_event('Informal dinner',[$diplomat,$diplomat2]);
+my $event2 = $game_state->add_event('Informal dinner',[$diplomat,$diplomat2]);
 
-my $information = $game_state->get_information($event_id);
+my $information = $game_state->get_information($event);
 $game_state->add_event('Meeting at hotel',[$agent,$citizen_not_added]);
 
-$game_state->learn($agent,$event_id);
+$game_state->learn($agent,$event);
 
 
 ############
@@ -59,9 +59,9 @@ subtest 'Citizens added to gamestate' => sub {
 
 subtest 'Event participation' => sub {
       plan tests => 3;
-	ok(knows_information($agent,$information), $agent . " should have leart: " . $information);
-	ok(knows_information($diplomat,$information),"Participant " . $diplomat . " should have learnt: " . $information);
-	ok(knows_information($diplomat2,$information), "Participant " . $diplomat2 . " should  have learnt: " . $information);
+	ok(knows_information($game_state,$agent,$information), $agent . " should have leart: " . $information);
+	ok(knows_information($game_state,$diplomat,$information),"Participant " . $diplomat . " should have learnt: " . $information);
+	ok(knows_information($game_state,$diplomat2,$information), "Participant " . $diplomat2 . " should  have learnt: " . $information);
 };
 
 
@@ -69,7 +69,8 @@ subtest 'Event participation' => sub {
 ### Help functions ###
 
 sub knows_information {
-	(my $citizen,my $information) = @_;
+	(my $game_state,my $citizen_clone,my $information) = @_;
+	my $citizen = $game_state->_get_citizen($citizen_clone);
 	return grep($_->id eq $information->id,@{$citizen->_known_information})
 
 }

@@ -7,6 +7,7 @@ use Log::Log4perl;
 use String::Trim;
 use Data::Dumper;
 
+
 use namespace::autoclean;
 
 my $logger = Log::Log4perl->get_logger('citizen');
@@ -14,6 +15,7 @@ my $logger = Log::Log4perl->get_logger('citizen');
 
 use overload '""' => "to_string", fallback => 1;
 use overload '~~' => "_matching", fallback => 1;
+use overload 'eq' => "_matching", fallback => 1;
 
 class_has 'attribute_min' =>( is => 'ro', isa => 'Int',default => 0);
 class_has 'attribute_max' =>( is => 'ro', isa => 'Int',default => 10);

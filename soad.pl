@@ -23,7 +23,13 @@ $citizen_generator->setup($game_state);
 
 $game_state->add_player();
 
+
 my $event_generator = EventGenerator->new();
 $event_generator->update_game_state($game_state);
 $event_generator->update_game_state($game_state);
 $event_generator->update_game_state($game_state);
+
+#my $citizens = $game_state->get_citizens();
+#my $diplomat = $citizens->[0];
+#my $diplomat2 = $citizens->[1];
+#my $event_id = $game_state->add_event('Informal dinner',[$diplomat,$diplomat2]);
