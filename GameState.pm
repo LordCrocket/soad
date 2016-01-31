@@ -145,6 +145,11 @@ sub get_occupations {
 	return find_type_constraint('Occupation')->{values};
 }
 
+sub get_allegiances {
+	(my $self) = @_;
+	return find_type_constraint('Allegiance')->{values};
+}
+
 sub _information_exists {
 	(my $self,my $information) = @_;
         return $information ~~ $self->_information;
@@ -163,6 +168,17 @@ sub learn {
 	}
 	else {
 		$internal_citizen->learn($information);
+	}
+}
+
+sub add_allegiance {
+	(my $self,my $citizen,my $allegiance) = @_;
+	my $internal_citizen = $self->_get_citizen($citizen);
+	if(! $internal_citizen){
+		$logger->warn("Citizen: " . $citizen  . " does not exits in: "  . $self);
+	}
+	else {
+		$internal_citizen->add_allegiance($allegiance);
 	}
 }
 

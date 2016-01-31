@@ -3,6 +3,7 @@ use warnings;
 use 5.20.0;
 ### Custom ###
 use GenerateCitizen;
+use GenerateAllegiance;
 use EventGenerator;
 use GameState;
 use experimental 'smartmatch';
@@ -18,8 +19,11 @@ my $logger = Log::Log4perl->get_logger('soad');
 $logger->debug("Seed is: " . srand());
 
 my $game_state = GameState->new();
-my $citizen_generator = GenerateCitizen->new(number_of_citizens => 3);
+my $citizen_generator = GenerateCitizen->new(number_of_citizens => 50);
+my $allegiance_generator = GenerateAllegiance->new();
+
 $citizen_generator->setup($game_state);
+$allegiance_generator->setup($game_state);
 
 $game_state->add_player();
 
@@ -28,6 +32,9 @@ my $event_generator = EventGenerator->new();
 $event_generator->update_game_state($game_state);
 $event_generator->update_game_state($game_state);
 $event_generator->update_game_state($game_state);
+
+my @double_agents = grep { scalar(@{$_->allegiances}) > 1} @{$game_state->get_citizens()};
+print Dumper(@double_agents);
 
 #my $citizens = $game_state->get_citizens();
 #my $diplomat = $citizens->[0];

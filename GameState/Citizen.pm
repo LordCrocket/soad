@@ -21,6 +21,8 @@ class_has 'attribute_min' =>( is => 'ro', isa => 'Int',default => 0);
 class_has 'attribute_max' =>( is => 'ro', isa => 'Int',default => 10);
 
 enum Occupation => [qw(diplomat chef shopkeeper)];
+enum Allegiance => [qw(KGB MI6)];
+
 subtype 'Attribute', as 'Int', where { $_ >= GameState::Citizen->attribute_min  && $_ <= GameState::Citizen->attribute_max};
 
 has 'name' => (is => 'ro', isa => 'Str',writer => '_set_name', initializer => '_trim_and_set_name', required => '1');
@@ -30,6 +32,18 @@ has 'loyalty' => (is => 'ro', isa => 'Attribute', required => '1');
 has 'financial_status' => (is => 'ro', isa => 'Attribute', required => '1');
 has 'social_life' => (is => 'ro', isa => 'Attribute', required => '1');
 
+has 'allegiances' => (
+	is => 'ro',
+	isa => 'ArrayRef[Allegiance]',
+	traits  => ['Array'],
+	init_arg => undef,
+	required => '1',
+	default => sub {[]},
+	handles => {
+		_push_allegiance  => 'push'
+	}
+);
+
 has '_known_information' => (
 	is  => 'rw',
 	isa => 'ArrayRef[GameState::Information]',
@@ -37,7 +51,7 @@ has '_known_information' => (
 	init_arg => undef,
 	default => sub {[]},
 	handles => {
-		_add_known_information  => 'push'
+		_push_known_information  => 'push'
 	}
 );
 
@@ -49,8 +63,14 @@ sub _trim_and_set_name {
 
 sub learn {
 	(my $self,my $information) = @_;
-	$self->_add_known_information($information);
+	$self->_push_known_information($information);
 	$logger->debug($self . " has learnt: " . $information);
+}
+
+sub add_allegiance {
+	(my $self,my $allegiance) = @_;
+	$self->_push_allegiance($allegiance);
+	$logger->debug($self . " is now loyal to: " . $allegiance);
 }
 
 sub to_string {
@@ -61,7 +81,7 @@ sub to_string {
 
 sub _matching {
 	(my $self,my $other) = @_;
-	$logger->debug("Matching: " . $self . " " . $other);
+	#$logger->debug("Matching: " . $self . " " . $other);
 	return $self->name eq $other->name;
 }
 
