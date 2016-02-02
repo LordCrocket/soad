@@ -126,12 +126,7 @@ sub _get_citizens_that_exists {
 	my @citizens = ();
 	foreach my $citizen (@{$potential_citizens}){
 		my $internal_citizen = $self->_get_citizen($citizen);
-		if ($internal_citizen){
-			push(@citizens,$internal_citizen);
-		}
-		else {
-			$logger->warn("Citizen: " . $citizen . " does not exists in " . $self);
-		}
+		push(@citizens,$internal_citizen) if $internal_citizen;
 	} 
 	return \@citizens;
 }
@@ -148,10 +143,6 @@ sub _add_information {
 	}
 }
 
-sub get_information {
-	(my $self,my $information) = @_;
-	return first { $_ eq $information  } @{$self->_information};
-}
 
 sub get_citizens {
 	(my $self) = @_;
@@ -170,11 +161,41 @@ sub _citizen_exists {
         return $citizen ~~ $self->_citizens;
 }
 
-sub _get_citizen {
-        (my $self,my $citizen) = @_;
-	return first { $_ eq $citizen  } @{$self->_citizens};
+sub _get_information {
+	(my $self,my $information) = @_;
+	my $internal_information = first { $_ eq $information  } @{$self->_information};
+	if ( $internal_information ){
+		return $internal_information;
+	}
+	else {
+		$logger->warn("Information: " . $information  . " does not exits in: "  . $self);
+		return undef;
+	}
 }
 
+sub _get_citizen {
+        (my $self,my $citizen) = @_;
+	my $internal_citizen = first { $_ eq $citizen  } @{$self->_citizens};
+	if ( $internal_citizen ){
+		return $internal_citizen;
+	}
+	else {
+		$logger->warn("Citizen: " . $citizen  . " does not exits in: "  . $self);
+		return undef;
+	}
+}
+
+sub _get_player {
+        (my $self,my $player) = @_;
+	my $internal_player = first { $_ eq $player  } @{$self->_players};
+	if ( $internal_player ){
+		return $internal_player;
+	}
+	else {
+		$logger->warn("Player: " . $player  . " does not exits in: "  . $self);
+		return undef;
+	}
+}
 sub get_occupations {
 	(my $self) = @_;
 	return find_type_constraint('Occupation')->{values};
@@ -185,41 +206,26 @@ sub get_allegiances {
 	return find_type_constraint('Allegiance')->{values};
 }
 
-sub _information_exists {
-	(my $self,my $information) = @_;
-        return $information ~~ $self->_information;
-}
-
 sub learn {
 	(my $self,my $citizen,my $information) = @_;
-	my $internal_citizen = $self->_get_citizen($citizen);
-	my $internal_information = $self->get_information($information);
+	my $internal_citizen = $self->_get_citizen($citizen) || return;
+	my $internal_information = $self->_get_information($information) || return;
 
-	if(! $internal_citizen){
-		$logger->warn("Citizen: " . $citizen  . " does not exits in: "  . $self);
-	}
-	elsif(! $internal_information){
-		$logger->warn("Information: " . $information  . " does not exits in: "  . $self);
-	}
-	else {
-		$internal_citizen->learn($information);
-	}
+	$internal_citizen->learn($information);
 }
 
 sub add_allegiance {
 	(my $self,my $citizen,my $allegiance) = @_;
-	my $internal_citizen = $self->_get_citizen($citizen);
-	if(! $internal_citizen){
-		$logger->warn("Citizen: " . $citizen  . " does not exits in: "  . $self);
-	}
-	else {
-		$internal_citizen->add_allegiance($allegiance);
-	}
+	my $internal_citizen = $self->_get_citizen($citizen) || return;
+	$internal_citizen->add_allegiance($allegiance);
 }
 
 sub add_known_citizen {
 	(my $self,my $player,my $citizen) = @_;
+	my $internal_citizen = $self->_get_citizen($citizen) || return;
+	my $internal_player = $self->_get_player($player) || return;
 	$player->add_known_citizen($citizen);
+	$internal_player->add_known_citizen($citizen);
 }
 
 sub to_string {

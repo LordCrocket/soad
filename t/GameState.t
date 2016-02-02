@@ -37,7 +37,7 @@ my $citizen_not_added = GameState::Citizen->new( name => "Kalle Kula"
 my $event = $game_state->add_event('Informal dinner',[$diplomat,$diplomat2]);
 my $event2 = $game_state->add_event('Informal dinner',[$diplomat,$diplomat2]);
 
-my $information = $game_state->get_information($event);
+my $information = $game_state->_get_information($event);
 $game_state->add_event('Meeting at hotel',[$agent,$citizen_not_added]);
 
 $game_state->learn($agent,$event);
