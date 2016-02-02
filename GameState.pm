@@ -10,6 +10,7 @@ use List::Util qw(first);
 use GameState::Citizen;
 use GameState::Player;
 use GameState::Event;
+use GameState::Choice;
 
 use namespace::autoclean;
 
@@ -72,8 +73,42 @@ sub add_player {
 	$self->_push_player($player);
 	$logger->debug("Player: " . $player  . " was added to " . $self);
 }
+
+sub set_agent {
+	(my $self, my $player,my $citizen) = @_;
+	my $internal_citizen = $self->_get_citizen($citizen) || return;
+	my $internal_player = $self->_get_player($player) || return;
+
+	$internal_player->agent($citizen);
+}
+
+sub generate_choice {
+	(my $self, my $choice_hash) = @_;
+	my $choice = GameState::Choice->new($choice_hash);
+	$logger->debug("Choice: " . $choice  . " generated in: " . $self);
+
+}
+
+sub add_choice {
+	(my $self, my $player,my $choice) = @_;
+	my $internal_player = $self->_get_player($player) || return;
+
+	$internal_player->add_choice($choice);
+}
+
+sub make_choice {
+	(my $self, my $player,my $choice,my $option) = @_;
+
+
+}
+
+sub get_players {
+	(my $self) = @_;
+	return dclone($self->_players);
+}
+
 sub add_citizen {
-	(my $self,my $citizen_hash) = @_;
+	(my $self, my $citizen_hash) = @_;
 	my $citizen = GameState::Citizen->new($citizen_hash);	
 	$self->_push_citizen($citizen);
 	$logger->debug("Citizen: " . $citizen  . " was added to " . $self);

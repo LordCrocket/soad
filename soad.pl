@@ -26,6 +26,7 @@ $citizen_generator->setup($game_state);
 $allegiance_generator->setup($game_state);
 
 $game_state->add_player();
+$game_state->add_player();
 
 
 my $event_generator = EventGenerator->new();
@@ -33,8 +34,32 @@ $event_generator->update_game_state($game_state);
 $event_generator->update_game_state($game_state);
 $event_generator->update_game_state($game_state);
 
-my @double_agents = grep { scalar(@{$_->allegiances}) > 1} @{$game_state->get_citizens()};
-print Dumper(@double_agents);
+my $player = $game_state->get_players()->[0];
+
+
+my $ref = sub {
+	(my $player,my $agent) = @_;
+	$game_state->set_agent($player,$agent);
+};
+my $options = $player->known_citizens();
+my $choice = $game_state->generate_choice({
+		options => $options,
+		callback => $ref,
+		description => "Pick agent"
+	}
+);
+
+my $option = $player->choices->[0];
+print Dumper($option);
+$ref->($player,$game_state->get_citizens()->[0]);
+
+
+print Dumper($game_state->get_players()->[0]->agent->name);
+
+
+
+#my @double_agents = grep { scalar(@{$_->allegiances}) > 1} @{$game_state->get_citizens()};
+#print Dumper(@double_agents);
 
 #my $citizens = $game_state->get_citizens();
 #my $diplomat = $citizens->[0];

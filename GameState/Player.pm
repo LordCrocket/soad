@@ -8,6 +8,7 @@ use Log::Log4perl;
 my $logger = Log::Log4perl->get_logger('player');
 
 use overload '""' => "to_string", fallback => 1;
+use overload 'eq' => "_matching", fallback => 1;
 
 class_has 'counter' => (
       traits  => ['Counter'],
@@ -32,7 +33,7 @@ has '_known_information' => (
 	}
 );
 
-has '_known_citizen' => (
+has 'known_citizens' => (
 	is  => 'ro',
 	isa => 'ArrayRef[GameState::Citizen]',
 	traits  => ['Array'],
@@ -40,18 +41,45 @@ has '_known_citizen' => (
 	default => sub {[]},
 
 	handles => {
-		_add_known_citizen  => 'push'
+		_push_known_citizen  => 'push'
 	}
 );
 
+has 'choices' => (
+	is  => 'ro',
+	isa => 'ArrayRef[Choice]',
+	traits  => ['Array'],
+	init_arg => undef,
+	default => sub {[]},
+
+	handles => {
+		_push_choice  => 'push'
+	}
+);
+
+has 'agent' => (is => 'rw', isa => 'GameState::Citizen');
+
 sub add_know_citizen {
 	(my $self,my $citizen) = @_;
-	$self->_add_known_citizen($citizen);
+	$self->_push_known_citizen($citizen);
 	$logger->debug("Player: " .$self." now knows " . $citizen);
+}
+
+sub add_choice {
+	(my $self,my $choice) = @_;
+	$self->_push_choice($choice);
+	$logger->debug("Player: " .$self." now got choice " . $choice);
+
 }
 sub to_string {
 	(my $self) = @_;
 	return $self->id;
+}
+
+sub _matching {
+	(my $self,my $other) = @_;
+	#$logger->debug("Matching: " . $self . " " . $other);
+	return $self->id eq $other->id;
 }
 
 __PACKAGE__->meta->make_immutable;
