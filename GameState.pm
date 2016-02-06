@@ -79,7 +79,7 @@ sub set_agent {
 	my $internal_citizen = $self->_get_citizen($citizen) || return;
 	my $internal_player = $self->_get_player($player) || return;
 
-	$internal_player->agent($citizen);
+	$internal_player->agent($internal_citizen);
 }
 
 sub generate_choice {
