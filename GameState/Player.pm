@@ -47,7 +47,7 @@ has 'known_citizens' => (
 
 has 'choices' => (
 	is  => 'ro',
-	isa => 'ArrayRef[Choice]',
+	isa => 'ArrayRef[GameState::Choice]',
 	traits  => ['Array'],
 	init_arg => undef,
 	default => sub {[]},

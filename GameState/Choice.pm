@@ -27,10 +27,12 @@ has 'id' => (is => 'ro', isa => 'Int',required => '0',default => sub { return Ga
 
 has 'options' => (
 	is => 'ro',
-	isa => 'ArrayRef',
-	traits  => ['Array'],
+	isa => 'CodeRef',
+	traits  => ['Code'],
 	required => '1',
-	default => sub {[]},
+	handles => {
+		get_options => 'execute',
+	},
 );
 
 has 'callback' => (
@@ -39,9 +41,10 @@ has 'callback' => (
 	isa     => 'CodeRef',
 	required => '1',
 	handles => {
-		call => 'execute_method',
+		make_choice => 'execute',
 	},
 );
+
 
 sub to_string {
 	(my $self) = @_;
