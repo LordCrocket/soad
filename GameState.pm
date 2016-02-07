@@ -86,6 +86,7 @@ sub generate_choice {
 	(my $self, my $choice_hash) = @_;
 	my $choice = GameState::Choice->new($choice_hash);
 	$logger->debug("Choice: " . $choice  . " generated in: " . $self);
+	return $choice;
 
 }
 
