@@ -59,7 +59,7 @@ has 'choices' => (
 
 has 'agent' => (is => 'rw', isa => 'GameState::Citizen');
 
-sub add_know_citizen {
+sub add_known_citizen {
 	(my $self,my $citizen) = @_;
 	$self->_push_known_citizen($citizen);
 	$logger->debug("Player: " .$self." now knows " . $citizen);

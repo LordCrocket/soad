@@ -118,7 +118,7 @@ sub add_event {
 	(my $self,my $title,my $citizens) = @_;
 	my $event = GameState::Event->new(title => $title, participants => $self->_get_citizens_that_exists($citizens));
 	$self->_add_information($event);
-	return $event;
+	return clone($event);
 }
 
 sub _get_citizens_that_exists {
@@ -224,8 +224,7 @@ sub add_known_citizen {
 	(my $self,my $player,my $citizen) = @_;
 	my $internal_citizen = $self->_get_citizen($citizen) || return;
 	my $internal_player = $self->_get_player($player) || return;
-	$player->add_known_citizen($citizen);
-	$internal_player->add_known_citizen($citizen);
+	$internal_player->add_known_citizen($internal_citizen);
 }
 
 sub to_string {
