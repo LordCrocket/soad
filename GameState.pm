@@ -5,12 +5,12 @@ use Moose::Util::TypeConstraints;
 use MooseX::ClassAttribute;
 use experimental 'smartmatch';
 use Data::Dumper;
-use Storable qw(dclone);
 use List::Util qw(first);
 use GameState::Citizen;
 use GameState::Player;
 use GameState::Event;
 use GameState::Choice;
+use Clone 'clone';
 
 use namespace::autoclean;
 
@@ -104,7 +104,7 @@ sub make_choice {
 
 sub get_players {
 	(my $self) = @_;
-	return dclone($self->_players);
+	return clone($self->_players);
 }
 
 sub add_citizen {
@@ -146,7 +146,7 @@ sub _add_information {
 
 sub get_citizens {
 	(my $self) = @_;
-	return dclone($self->_citizens); 
+	return clone($self->_citizens);
 }
 sub get_citizens_attribute_max {
 	return GameState::Citizen->attribute_max;
