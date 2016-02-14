@@ -45,6 +45,7 @@ override 'setup' => sub {
 	$logger->debug("Generating Allegiances");
 
 	$self->_generate_allegiances_round_robin($game_state);
+	$logger->debug("Generating Double Agent");
 	$self->_add_double_agent($game_state);
 
 }; 

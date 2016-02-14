@@ -43,14 +43,19 @@ my $player = $game_state->get_players()->[0];
 
 my $citizen = $game_state->get_citizens()->[0];
 my $citizen2 = $game_state->get_citizens()->[1];
+
 $game_state->add_known_citizen($player,$citizen);
+$game_state->add_known_citizen($player,$citizen2);
+
 $player = $game_state->get_players()->[0];
+
 my $choice = $player->choices->[0];
+
 my $player2 = $game_state->get_players()->[0];
 $player2->add_known_citizen($citizen2);
 $game_state->add_known_citizen($player2,$citizen2);
 #say scalar @{$option->get_options()};
-$choice->make_choice($citizen);
+
 
 
 #print Dumper($option);
@@ -58,7 +63,10 @@ $choice->make_choice($citizen);
 #$ref->($player,$game_state->get_citizens()->[0]);
 
 
-print Dumper($game_state->get_players()->[0]->agent->name);
+$choice->make_choice($citizen);
+say $game_state->get_players()->[0]->agent->name;
+$choice->make_choice($citizen2);
+say $game_state->get_players()->[0]->agent->name;
 
 
 
