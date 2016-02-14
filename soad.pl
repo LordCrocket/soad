@@ -4,6 +4,7 @@ use 5.20.0;
 ### Custom ###
 use GenerateCitizen;
 use GenerateAllegiance;
+use AgentChoice;
 use EventGenerator;
 use GameState;
 use experimental 'smartmatch';
@@ -21,12 +22,15 @@ $logger->debug("Seed is: " . srand());
 my $game_state = GameState->new();
 my $citizen_generator = GenerateCitizen->new(number_of_citizens => 50);
 my $allegiance_generator = GenerateAllegiance->new();
+my $agent_choice = AgentChoice->new();
+
+$game_state->add_player();
+$game_state->add_player();
 
 $citizen_generator->setup($game_state);
 $allegiance_generator->setup($game_state);
+$agent_choice->setup($game_state);
 
-$game_state->add_player();
-$game_state->add_player();
 
 
 my $event_generator = EventGenerator->new();
@@ -37,21 +41,21 @@ $event_generator->update_game_state($game_state);
 my $player = $game_state->get_players()->[0];
 
 
-my $ref = sub {
-	(my $player,my $agent) = @_;
-	$game_state->set_agent($player,$agent);
-};
-my $options = $player->known_citizens();
-my $choice = $game_state->generate_choice({
-		options => $options,
-		callback => $ref,
-		description => "Pick agent"
-	}
-);
+my $citizen = $game_state->get_citizens()->[0];
+my $citizen2 = $game_state->get_citizens()->[1];
+$game_state->add_known_citizen($player,$citizen);
+$player = $game_state->get_players()->[0];
+my $choice = $player->choices->[0];
+my $player2 = $game_state->get_players()->[0];
+$player2->add_known_citizen($citizen2);
+$game_state->add_known_citizen($player2,$citizen2);
+#say scalar @{$option->get_options()};
+$choice->make_choice($citizen);
 
-my $option = $player->choices->[0];
-print Dumper($option);
-$ref->($player,$game_state->get_citizens()->[0]);
+
+#print Dumper($option);
+#print Dumper($ref2->($player));
+#$ref->($player,$game_state->get_citizens()->[0]);
 
 
 print Dumper($game_state->get_players()->[0]->agent->name);
