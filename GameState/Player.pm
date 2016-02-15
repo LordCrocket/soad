@@ -57,6 +57,7 @@ has 'choices' => (
 	}
 );
 
+has 'winner' => (is => 'rw', isa => 'Bool', default => 0);
 has 'agent' => (is => 'rw', isa => 'GameState::Citizen');
 
 sub add_known_citizen {
@@ -71,6 +72,13 @@ sub add_choice {
 	$logger->debug("Player: " .$self." now got choice " . $choice);
 
 }
+
+sub set_as_winner {
+	(my $self) = @_;
+	$self->winner(1);
+	$logger->debug("Player: " .$self." is set as winner");
+}
+
 sub to_string {
 	(my $self) = @_;
 	return $self->id;

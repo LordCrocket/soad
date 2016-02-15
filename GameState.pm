@@ -82,6 +82,12 @@ sub set_agent {
 	$internal_player->agent($internal_citizen);
 }
 
+sub set_as_winner {
+	(my $self, my $player) = @_;
+	my $internal_player = $self->_get_player($player) || return;
+	$internal_player->set_as_winner();
+}
+
 sub generate_choice {
 	(my $self, my $choice_hash) = @_;
 	my $choice = GameState::Choice->new($choice_hash);

@@ -48,6 +48,7 @@ $game_state->add_known_citizen($player,$citizen);
 $game_state->add_known_citizen($player,$citizen2);
 
 $player = $game_state->get_players()->[0];
+$game_state->set_as_winner($player);
 
 my $choice = $player->choices->[0];
 
