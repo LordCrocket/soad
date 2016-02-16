@@ -44,7 +44,7 @@ has 'allegiances' => (
 	}
 );
 
-has '_known_information' => (
+has 'known_information' => (
 	is  => 'rw',
 	isa => 'ArrayRef[GameState::Information]',
 	traits  => ['Array'],
@@ -81,7 +81,7 @@ sub to_string {
 
 sub _matching {
 	(my $self,my $other) = @_;
-	#$logger->debug("Matching: " . $self . " " . $other);
+#	$logger->debug("Matching: " . $self . " " . $other);
 	return $self->name eq $other->name;
 }
 

@@ -29,7 +29,7 @@ has '_known_information' => (
 	init_arg => undef,
 	default => sub {[]},
 	handles => {
-		_add_known_information  => 'push'
+		_push_known_information  => 'push'
 	}
 );
 
@@ -71,6 +71,12 @@ sub add_choice {
 	$self->_push_choice($choice);
 	$logger->debug("Player: " .$self." now got choice " . $choice);
 
+}
+
+sub learn {
+	(my $self,my $information) = @_;
+	$self->_push_known_information($information);
+	$logger->debug($self . " has learnt: " . $information);
 }
 
 sub set_as_winner {

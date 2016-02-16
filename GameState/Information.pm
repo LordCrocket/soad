@@ -24,6 +24,7 @@ class_has 'counter' => (
 has 'id' => (is => 'ro', isa => 'Int',required => '0',default => sub { return GameState::Information->inc_counter;});
 has 'title' => (is => 'ro', isa => 'Str', required => '1');
 has 'desc' => (is => 'ro', isa => 'Str', required => '0');
+has 'is_new' => (is => 'rw', isa => 'Bool', default => 1);
 
 sub _matching {
 	(my $self, my $other ) = @_;

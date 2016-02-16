@@ -72,6 +72,7 @@ sub add_player {
 	my $player = GameState::Player->new();
 	$self->_push_player($player);
 	$logger->debug("Player: " . $player  . " was added to " . $self);
+	return clone($player);
 }
 
 sub set_agent {
@@ -80,6 +81,17 @@ sub set_agent {
 	my $internal_player = $self->_get_player($player) || return;
 
 	$internal_player->agent($internal_citizen);
+}
+
+
+sub player_learn {
+	(my $self,my $player,my $information) = @_;
+	my $internal_player = $self->_get_player($player) || return;
+	my $internal_information = $self->_get_information($information) || return;
+
+	$internal_player->learn($internal_information);
+
+
 }
 
 sub set_as_winner {
@@ -218,7 +230,7 @@ sub learn {
 	my $internal_citizen = $self->_get_citizen($citizen) || return;
 	my $internal_information = $self->_get_information($information) || return;
 
-	$internal_citizen->learn($information);
+	$internal_citizen->learn($internal_information);
 }
 
 sub add_allegiance {

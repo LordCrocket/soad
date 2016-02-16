@@ -3,6 +3,11 @@ use warnings;
 use Test::More tests => 7;
 use Test::Exception;
 use 5.18.0;
+use experimental 'smartmatch';
+use Log::Log4perl;
+use Data::Dumper;
+use Scalar::Util 'refaddr';
+Log::Log4perl::init_and_watch('t/log4perl.conf',10);
 ### Custom ###
 use GameState::Information;
 use GameState::Player;
@@ -10,11 +15,6 @@ use GameState::Citizen;
 use GameState::Event;
 use GenerateCitizen;
 use GameState;
-use experimental 'smartmatch';
-use Log::Log4perl;
-use Data::Dumper;
-use Scalar::Util 'refaddr';
-Log::Log4perl::init_and_watch('t/log4perl.conf',10);
 
 ### Setup ###
 
@@ -48,14 +48,12 @@ subtest 'Citizens added to gamestate' => sub {
 };
 
 
-my $event = $game_state->add_event('Informal dinner',[$diplomat,$diplomat2]);
-my $event2 = $game_state->add_event('Informal dinner',[$diplomat,$diplomat2]);
+my $information = $game_state->add_event('Informal dinner',[$diplomat,$diplomat2]);
+my $information2 = $game_state->add_event('Informal dinner',[$diplomat,$diplomat2]);
 
-my $information = $game_state->_get_information($event);
-my $information2 = $game_state->_get_information($event2);
 $game_state->add_event('Meeting at hotel',[$agent,$citizen_not_added]);
 
-$game_state->learn($agent,$event);
+$game_state->learn($agent,$information);
 
 subtest 'Event participation' => sub {
       plan tests => 4;
@@ -82,7 +80,7 @@ dies_ok { $game_state->add_allegiance($agent,'No such allegiance')}  'Should not
 	ok(loyal_to($game_state,$diplomat,$allegiance2), $diplomat . " should be loyal to " . $allegiance2);
 };
 
-$agent->learn($event2);
+$agent->learn($information2);
 $diplomat2->add_allegiance($allegiance1);
 
 subtest 'Citizen direct manipulation' => sub {
@@ -109,7 +107,7 @@ subtest 'Players' => sub {
 
 };
 
-
+my $internal_information = $game_state->_get_information($information);
 subtest 'Player direct manipulation' => sub {
 	plan tests => 1;
 	ok(! knows_citizen($game_state,$player2,$diplomat), "Player " . $player2 . " should not know of " . $diplomat);
@@ -120,7 +118,7 @@ subtest 'Object cloning direct manipulation' => sub {
 	isnt( refaddr($player),refaddr($game_state->_players->[0]), "Cloned player should be returned from the game state");
 	isnt( refaddr($agent),refaddr($game_state->_players->[0]->known_citizens->[0]), "Cloned citizen should be returned from the game state");
 	isnt( refaddr($agent),refaddr($game_state->_citizens->[0]), "Cloned citizen should be returned from the game state");
-	isnt( refaddr($information),refaddr($event), "Cloned event should be returned from the game state");
+	isnt( refaddr($internal_information),refaddr($information), "Cloned event should be returned from the game state");
 };
 
 
@@ -129,7 +127,7 @@ subtest 'Object cloning direct manipulation' => sub {
 sub knows_information {
 	(my $game_state,my $citizen_clone,my $information) = @_;
 	my $citizen = $game_state->_get_citizen($citizen_clone);
-	return grep($_->id eq $information->id,@{$citizen->_known_information})
+	return grep($_->id eq $information->id,@{$citizen->known_information})
 
 }
 sub loyal_to {

@@ -4,7 +4,7 @@ use 5.20.0;
 ### Custom ###
 use GenerateCitizen;
 use GenerateAllegiance;
-use AgentChoice;
+use Agent;
 use EventGenerator;
 use GameState;
 use experimental 'smartmatch';
@@ -22,7 +22,7 @@ $logger->debug("Seed is: " . srand());
 my $game_state = GameState->new();
 my $citizen_generator = GenerateCitizen->new(number_of_citizens => 50);
 my $allegiance_generator = GenerateAllegiance->new();
-my $agent_choice = AgentChoice->new();
+my $agent_choice = Agent->new();
 
 $game_state->add_player();
 $game_state->add_player();
@@ -31,6 +31,7 @@ $citizen_generator->setup($game_state);
 $allegiance_generator->setup($game_state);
 $agent_choice->setup($game_state);
 
+$agent_choice->update_game_state($game_state);
 
 
 my $event_generator = EventGenerator->new();
