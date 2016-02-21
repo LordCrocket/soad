@@ -48,6 +48,7 @@ sub _add_all_new_information {
 	(my $self,my $game_state,my $player,my $agent) = @_;
 	foreach my $information (@{$agent->known_information}){
 		if($information->is_new()){
+			$logger->debug("Agent:" . $agent ." passed ". $information . " to player " . $player);
 			$game_state->player_learn($player,$information);
 		}
 

@@ -91,9 +91,9 @@ sub learn {
 	return if $self->_has_learnt($information);
 
 	$self->_push_known_information($information);
-	$logger->debug($self . " has learnt: " . $information);
+	$logger->debug("Player: ". $self . " has learnt: " . $information);
 	if($information->does('GameState::Participation')){
-		foreach my $participant ($information->get_participants()){
+		foreach my $participant (@{$information->get_participants()}){
 			$self->add_known_citizen($participant);
 		}
 	}

@@ -102,6 +102,13 @@ sub tick {
 		$game_module->update_game_state($self);
 	}
 }
+sub ended {
+	(my $self) = @_;
+	foreach my $player (@{$self->_players}){
+		return 1 if $player->winner();
+	}
+	return 0;
+}
 sub set_agent {
 	(my $self, my $player,my $citizen) = @_;
 	my $internal_citizen = $self->_get_citizen($citizen) || return;
@@ -278,11 +285,9 @@ sub add_known_citizen {
 
 sub clean_up {
 	(my $self) = @_;
-	foreach my $information ($self->_information){
+	foreach my $information (@{$self->_information}){
 		$information->is_new(0);
 	}
-
-
 }
 
 sub to_string {
