@@ -23,7 +23,7 @@ class_has 'counter' => (
       },
   );
 has 'id' => (is => 'ro', isa => 'Int',required => '0',default => sub { return GameState::Player->inc_counter;});
-has '_known_information' => (
+has 'known_information' => (
 	is  => 'ro',
 	isa => 'ArrayRef[GameState::Information]',
 	traits  => ['Array'],
@@ -73,6 +73,11 @@ sub _already_knows {
         return $citizen ~~ $self->known_citizens;
 }
 
+sub _has_learnt {
+        (my $self,my $information) = @_;
+        return $information ~~ $self->known_information;
+}
+
 sub add_choice {
 	(my $self,my $choice) = @_;
 	$self->_push_choice($choice);
@@ -82,8 +87,16 @@ sub add_choice {
 
 sub learn {
 	(my $self,my $information) = @_;
+
+	return if $self->_has_learnt($information);
+
 	$self->_push_known_information($information);
 	$logger->debug($self . " has learnt: " . $information);
+	if($information->does('GameState::Participation')){
+		foreach my $participant ($information->get_participants()){
+			$self->add_known_citizen($participant);
+		}
+	}
 }
 
 sub set_as_winner {

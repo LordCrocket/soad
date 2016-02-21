@@ -46,6 +46,6 @@ subtest 'Citizens added to gamestate' => sub {
 sub player_knows_information {
 	(my $game_state,my $player_clone,my $information) = @_;
 	my $player = $game_state->_get_player($player_clone);
-	return grep($_->id eq $information->id,@{$player->_known_information})
+	return grep($_->id eq $information->id,@{$player->known_information})
 
 }
