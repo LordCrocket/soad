@@ -5,6 +5,7 @@ use 5.20.0;
 use GameModule::GenerateCitizen;
 use GameModule::GenerateAllegiance;
 use GameModule::Agent;
+use GameModule::LearnCitizen;
 use GameModule::LearnInformation;
 use GameModule::EventGenerator;
 use GameState;
@@ -24,6 +25,7 @@ my $game_state = GameState->new();
 my $citizen_generator = GameModule::GenerateCitizen->new(number_of_citizens => 13);
 my $allegiance_generator = GameModule::GenerateAllegiance->new();
 my $information_learn = GameModule::LearnInformation->new();
+my $citizen_learn = GameModule::LearnCitizen->new();
 my $agent_choice = GameModule::Agent->new();
 
 $game_state->add_player();
@@ -44,6 +46,10 @@ $event_generator->update_game_state($game_state);
 $information_learn->update_game_state($game_state);
 $information_learn->update_game_state($game_state);
 $information_learn->update_game_state($game_state);
+
+$citizen_learn->update_game_state($game_state);
+$citizen_learn->update_game_state($game_state);
+$citizen_learn->update_game_state($game_state);
 
 my $player = $game_state->get_players()->[0];
 

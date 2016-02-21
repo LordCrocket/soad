@@ -4,6 +4,7 @@ use MooseX::StrictConstructor;
 use MooseX::ClassAttribute;
 use namespace::autoclean;
 use Log::Log4perl;
+use experimental 'smartmatch';
 
 my $logger = Log::Log4perl->get_logger('player');
 
@@ -62,8 +63,14 @@ has 'agent' => (is => 'rw', isa => 'GameState::Citizen');
 
 sub add_known_citizen {
 	(my $self,my $citizen) = @_;
+	return if $self->_already_knows($citizen);
 	$self->_push_known_citizen($citizen);
 	$logger->debug("Player: " .$self." now knows " . $citizen);
+}
+
+sub _already_knows {
+        (my $self,my $citizen) = @_;
+        return $citizen ~~ $self->known_citizens;
 }
 
 sub add_choice {

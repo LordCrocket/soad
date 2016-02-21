@@ -3,7 +3,7 @@ use Moose;
 use namespace::autoclean;
 
 extends 'GameModule';
-my $logger = Log::Log4perl->get_logger('learn');
+my $logger = Log::Log4perl->get_logger('learninformation');
 
 
 sub _inclusive_int_rand {
