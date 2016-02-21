@@ -13,7 +13,7 @@ use GameState::Information;
 use GameState::Player;
 use GameState::Citizen;
 use GameState::Event;
-use GenerateCitizen;
+use GameModule::GenerateCitizen;
 use GameState;
 
 ### Setup ###
@@ -21,7 +21,7 @@ use GameState;
 my $game_state = GameState->new();
 my $occupations = $game_state->get_occupations();
 
-my $citizen_generator = GenerateCitizen->new(number_of_citizens => 3);
+my $citizen_generator = GameModule::GenerateCitizen->new(number_of_citizens => 3);
 $citizen_generator = $citizen_generator->setup($game_state);
 my $citizens = $game_state->get_citizens();
 my $diplomat = $citizens->[0];

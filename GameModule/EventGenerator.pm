@@ -1,4 +1,4 @@
-package EventGenerator;
+package GameModule::EventGenerator;
 use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::StrictConstructor;

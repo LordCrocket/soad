@@ -6,14 +6,14 @@ use Log::Log4perl;
 Log::Log4perl::init_and_watch('t/log4perl.conf',10);
 ### Custom ###
 use GameState;
-use Agent;
-use GenerateCitizen;
+use GameModule::Agent;
+use GameModule::GenerateCitizen;
 
 ### Setup ###
 my $game_state = GameState->new();
 
-my $citizen_generator = GenerateCitizen->new(number_of_citizens => 3);
-my $agent_choice = Agent->new();
+my $citizen_generator = GameModule::GenerateCitizen->new(number_of_citizens => 3);
+my $agent_choice = GameModule::Agent->new();
 
 $citizen_generator = $citizen_generator->setup($game_state);
 $agent_choice->setup($game_state);

@@ -4,7 +4,7 @@ use Test::More tests => 2;
 use 5.18.0;
 
 
-use GenerateCitizen;
+use GameModule::GenerateCitizen;
 use GameState;
 use GameState::Citizen;
 use Log::Log4perl;
@@ -24,14 +24,14 @@ sub same_seed_generation {
 	my $seed = srand();
 	my $game_state = GameState->new(); 
 
-	my $first_citizen_generator = GenerateCitizen->new(number_of_citizens => 1);
+	my $first_citizen_generator = GameModule::GenerateCitizen->new(number_of_citizens => 1);
 
 	my $citizensFirstRound = generate_citizens($first_citizen_generator,$game_state);
 	my $citizen1 = $citizensFirstRound->[0];
 
 	srand($seed);
 	my $game_state2 = GameState->new(); 
-	my $second_citizen_generator = GenerateCitizen->new(number_of_citizens => 1);
+	my $second_citizen_generator = GameModule::GenerateCitizen->new(number_of_citizens => 1);
 	my $citizensSecondRound = generate_citizens($second_citizen_generator,$game_state2);
 	my $citizen2 = $citizensSecondRound->[0];
 
@@ -55,8 +55,8 @@ srand(); # Resetting seed
 sub multiple_citizens_generators {
 
 	my $game_state = GameState->new(); 
-	my $first_citizen_generator = GenerateCitizen->new(number_of_citizens => 5);
-	my $second_citizen_generator = GenerateCitizen->new(number_of_citizens => 5);
+	my $first_citizen_generator = GameModule::GenerateCitizen->new(number_of_citizens => 5);
+	my $second_citizen_generator = GameModule::GenerateCitizen->new(number_of_citizens => 5);
 	my $citizens = generate_citizens($first_citizen_generator,$game_state);
 	my $citizens2 = generate_citizens($second_citizen_generator,$game_state);
 

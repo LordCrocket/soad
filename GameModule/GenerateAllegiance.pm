@@ -1,4 +1,4 @@
-package GenerateAllegiance;
+package GameModule::GenerateAllegiance;
 use Moose;
 use Data::Dumper;
 use namespace::autoclean;

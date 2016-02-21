@@ -1,4 +1,4 @@
-package GenerateCitizen;
+package GameModule::GenerateCitizen;
 use Moose;
 use MooseX::StrictConstructor;
 use namespace::autoclean;

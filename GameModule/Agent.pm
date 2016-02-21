@@ -1,4 +1,4 @@
-package Agent;
+package GameModule::Agent;
 use Moose;
 use namespace::autoclean;
 
