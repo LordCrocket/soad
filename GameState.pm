@@ -162,7 +162,10 @@ sub _add_information {
 	}
 }
 
-
+sub get_information {
+	(my $self) = @_;
+	return clone($self->_information);
+}
 sub get_citizens {
 	(my $self) = @_;
 	return clone($self->_citizens);

@@ -69,7 +69,6 @@ sub _get_information_from_agent {
 override 'update_game_state' => sub {
 	(my $self, my $game_state) = @_;
 	$self->_get_information_from_agent($game_state);
-
 };
 
 __PACKAGE__->meta->make_immutable;
