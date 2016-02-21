@@ -62,6 +62,16 @@ has '_information' => (
 	}
 );
 
+has '_game_modules' => (
+	is  => 'ro',
+	isa => 'ArrayRef[GameModule]',
+	traits => ['Array'],
+	init_arg => undef,
+	default => sub {[]},
+	handles => {
+		_push_game_module  => 'push'
+	}
+);
 sub BUILD {
 	(my $self) = @_;
 	$logger->debug($self . " created"); 
@@ -75,6 +85,23 @@ sub add_player {
 	return clone($player);
 }
 
+sub add_game_module {
+	(my $self,my $game_module) = @_;
+	$self->_push_game_module($game_module);
+}
+
+sub setup {
+	(my $self) = @_;
+	foreach my $game_module (@{$self->_game_modules}){
+		$game_module->setup($self);
+	}
+}
+sub tick {
+	(my $self) = @_;
+	foreach my $game_module (@{$self->_game_modules}){
+		$game_module->update_game_state($self);
+	}
+}
 sub set_agent {
 	(my $self, my $player,my $citizen) = @_;
 	my $internal_citizen = $self->_get_citizen($citizen) || return;
@@ -247,6 +274,15 @@ sub add_known_citizen {
 	my $internal_citizen = $self->_get_citizen($citizen) || return;
 	my $internal_player = $self->_get_player($player) || return;
 	$internal_player->add_known_citizen($internal_citizen);
+}
+
+sub clean_up {
+	(my $self) = @_;
+	foreach my $information ($self->_information){
+		$information->is_new(0);
+	}
+
+
 }
 
 sub to_string {

@@ -27,29 +27,24 @@ my $allegiance_generator = GameModule::GenerateAllegiance->new();
 my $information_learn = GameModule::LearnInformation->new();
 my $citizen_learn = GameModule::LearnCitizen->new();
 my $agent_choice = GameModule::Agent->new();
-
-$game_state->add_player();
-$game_state->add_player();
-
-$citizen_generator->setup($game_state);
-$allegiance_generator->setup($game_state);
-$agent_choice->setup($game_state);
-
-$agent_choice->update_game_state($game_state);
-
-
 my $event_generator = GameModule::EventGenerator->new();
-$event_generator->update_game_state($game_state);
-$event_generator->update_game_state($game_state);
-$event_generator->update_game_state($game_state);
 
-$information_learn->update_game_state($game_state);
-$information_learn->update_game_state($game_state);
-$information_learn->update_game_state($game_state);
+$game_state->add_game_module($citizen_generator);
+$game_state->add_game_module($allegiance_generator);
+$game_state->add_game_module($information_learn);
+$game_state->add_game_module($citizen_learn);
+$game_state->add_game_module($agent_choice);
+$game_state->add_game_module($event_generator);
 
-$citizen_learn->update_game_state($game_state);
-$citizen_learn->update_game_state($game_state);
-$citizen_learn->update_game_state($game_state);
+$game_state->add_player();
+$game_state->add_player();
+
+
+$game_state->setup();
+$game_state->tick();
+$game_state->tick();
+$game_state->tick();
+
 
 my $player = $game_state->get_players()->[0];
 
@@ -78,9 +73,7 @@ $game_state->add_known_citizen($player2,$citizen2);
 
 
 $choice->make_choice($citizen);
-say $game_state->get_players()->[0]->agent->name;
 $choice->make_choice($citizen2);
-say $game_state->get_players()->[0]->agent->name;
 
 
 
