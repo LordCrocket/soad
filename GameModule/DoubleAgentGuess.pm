@@ -11,6 +11,7 @@ sub _generate_guess_double_agent_callback {
 	
 	return sub {
 		(my $agent_guess) = @_;
+		$logger->debug("Player: " . $player . " guessed " . $agent_guess);
 		my $double_agent = first { scalar(@{$_->allegiances}) > 1} @{$game_state->get_citizens()};
 		if($agent_guess eq $double_agent){
 			$game_state->set_as_winner($player);

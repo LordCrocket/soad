@@ -12,6 +12,7 @@ sub _generate_set_agent_callback {
 	
 	return sub {
 		(my $agent) = @_;
+		$logger->debug("Player: $player set $agent (" . $agent->social_life . ") as agent");
 		$game_state->set_agent($player,$agent);
 	};
 }

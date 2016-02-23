@@ -28,7 +28,7 @@ has 'is_new' => (is => 'rw', isa => 'Bool', default => 1);
 
 sub _matching {
 	(my $self, my $other ) = @_;
-	$logger->debug("Matching: " . $self . " " . $other);
+	#$logger->debug("Matching: " . $self . " " . $other);
 	return $self->id == $other->id;
 }
 __PACKAGE__->meta->make_immutable;
