@@ -17,24 +17,26 @@ use Data::Dumper;
 use Moose::Util::TypeConstraints;
 use Log::Log4perl;
 use List::Util qw(first);
+use String::Numeric qw(is_int);
 
 Log::Log4perl::init_and_watch('log4perl.conf',10);
 my $logger = Log::Log4perl->get_logger('soad');
 
 
 sub get_user_input {
+	(my $min,my $max) = @_;
 	print "Make choice: ";
 	my $input = <STDIN>;
 	chomp $input;
+	return unless is_int($input);
+	return unless int($input) >= $min;
+	return unless int($input) <= $max;
 	return $input;
 }
 
 sub list_choices {
-	say "1. List known citizens";
-	say "2. List known information";
-	say "3. Pick agent";
-	say "4. Guess double agent";
-	say "5. End turn";
+	say "1. Pick agent";
+	say "2. Guess double agent";
 }
 
 sub list_citizens {
@@ -62,7 +64,8 @@ sub pick_agent {
 	(my $agent_choice) = @{$player->choices};
 	my $known_citizens = $agent_choice->get_options();
 	list_citizens($agent_choice->description,$known_citizens);
-	my $choice = get_user_input();
+	my $choice = get_user_input(0,scalar @{$known_citizens} - 1);
+	return unless defined $choice;
 	my $agent = $known_citizens->[$choice];
 	$agent_choice->make_choice($agent);
 }
@@ -72,7 +75,8 @@ sub guess_double_agent {
 	my $agent_choice = $player->choices->[1];
 	my $known_citizens = $agent_choice->get_options();
 	list_citizens($agent_choice->description,$known_citizens);
-	my $choice = get_user_input();
+	my $choice = get_user_input(0,scalar @{$known_citizens} - 1);
+	return unless defined $choice;
 	my $agent = $known_citizens->[$choice];
 	$agent_choice->make_choice($agent);
 }
@@ -82,15 +86,12 @@ sub make_choice {
 	no warnings;
         for ($choice)
         {
-            when (/1/)    { list_citizens("Known citizens",$player->known_citizens) };
-            when (/2/)     { list_known_information($player)  };
-            when (/3/) { pick_agent($game_state,$player)};
-            when (/4/) { guess_double_agent($game_state,$player) };
-            when (/5/) { return 0 };
+            when (/1/) { pick_agent($game_state,$player)};
+            when (/2/) { guess_double_agent($game_state,$player) };
             default           { say "No such option"  };
         }
 	use warnings;
-	return 1;
+	return 0;
 
 }
 
@@ -126,23 +127,19 @@ while(! $game_state->ended ) {
 			say "Agent:  $agent";
 		}
 		do {
+			list_known_information($player);
 			list_choices();
-		}while(make_choice($game_state,$player,get_user_input()));
+		}while(make_choice($game_state,$player,get_user_input(0,2)));
 		say "";
 		say "";
 	}
 	$game_state->clean_up();
 }
+say "Game over! These players had it right: ";
+foreach my $player (@{$game_state->get_players}){
+	if($player->winner()){
+		say "Player: " . $player;
+	}
+}
 
 
-
-my $player = $game_state->get_players()->[0];
-my $double_agent = first { scalar(@{$_->allegiances}) > 1} @{$game_state->get_citizens()};
-
-$game_state->add_known_citizen($player,$double_agent);
-
-
-my $choice = $player->choices->[0];
-my $choice2 = $player->choices->[1];
-
-$choice2->make_choice($double_agent);
