@@ -3,11 +3,20 @@ use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::StrictConstructor;
 use Readonly;
+use List::MoreUtils qw(any);
 extends 'GameModule';
 
 my $logger = Log::Log4perl->get_logger('eventgenerator');
 
 Readonly::Array1 my @event_titles => ("Informal dinner","Meeting at hotel");
+
+sub _got_same_allegiance {
+	(my $citizen1, my $citizen2) = @_;
+	foreach my $allegiance (@{$citizen1->allegiances}){
+		return 1 if any { $_ eq $allegiance}(@{$citizen2->allegiances});
+	}
+
+}
 
 sub _get_random_event_title {
 	return $event_titles[rand(scalar @event_titles)];
@@ -21,13 +30,13 @@ sub _get_two_random_citizens {
 		die "Need at least two citizens to be able to generate an event";
 	}	
 
-	my $first_citizen = int(rand($number_of_citizens));
+	my $first_citizen = $citizens->[int(rand($number_of_citizens))];
 	my $second_citizen;
 	do {
-		$second_citizen = int(rand(scalar @$citizens));
-	} while ($first_citizen == $second_citizen);
+		$second_citizen = $citizens->[int(rand(scalar @$citizens))];
+	} while ($first_citizen eq $second_citizen || (! _got_same_allegiance($first_citizen,$second_citizen)));
 
-	return ($citizens->[$first_citizen],$citizens->[$second_citizen]);	
+	return ($first_citizen,$second_citizen);
 
 }
 
