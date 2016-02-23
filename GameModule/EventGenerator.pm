@@ -10,6 +10,8 @@ my $logger = Log::Log4perl->get_logger('eventgenerator');
 
 Readonly::Array1 my @event_titles => ("Informal dinner","Meeting at hotel");
 
+has 'number_of_events_per_tick' => (is => 'ro', isa => 'Int', required => '1');
+
 sub _got_same_allegiance {
 	(my $citizen1, my $citizen2) = @_;
 	foreach my $allegiance (@{$citizen1->allegiances}){
@@ -52,7 +54,9 @@ sub _generate_event {
 
 override 'update_game_state' => sub {
 	(my $self, my $game_state) = @_;
-	$self->_generate_event($game_state);
+	for(1..$self->number_of_events_per_tick) {
+		$self->_generate_event($game_state);
+	}
 };
 
 __PACKAGE__->meta->make_immutable;

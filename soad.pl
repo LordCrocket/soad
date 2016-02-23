@@ -102,7 +102,7 @@ my $allegiance_generator = GameModule::GenerateAllegiance->new();
 my $information_learn = GameModule::LearnInformation->new();
 my $citizen_learn = GameModule::LearnCitizen->new();
 my $agent_choice = GameModule::Agent->new();
-my $event_generator = GameModule::EventGenerator->new();
+my $event_generator = GameModule::EventGenerator->new(number_of_events_per_tick => 3);
 my $double_agent_guess = GameModule::DoubleAgentGuess->new();
 
 $game_state->add_game_module($citizen_generator);
