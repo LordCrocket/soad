@@ -6,6 +6,6 @@ perl:
 script: prove t/
 before_install: 
     - sudo apt-get update -q
-    - sudo apt-get install -q libmoose-perl libmoosex-strictconstructor-perl liblog-log4perl-perl
+    - sudo apt-get install -q libmoose-perl libmoosex-strictconstructor-perl
 install:
-    - cpanm MooseX::ABC String::Trim Readonly List::Compare.pm Clone Test::Exception Array/Utils.pm String/Numeric.pm MooseX::ClassAttribute
+    - cpanm MooseX::ABC String::Trim Readonly List::Compare.pm Clone Test::Exception Array/Utils.pm String/Numeric.pm MooseX::ClassAttribute Log/Log4perl.pm
