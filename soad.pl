@@ -1,6 +1,8 @@
 use strict; 
 use warnings;
 use 5.20.0;
+use FindBin;
+use lib "$FindBin::Bin/";
 ### Custom ###
 use GameModule::GenerateCitizen;
 use GameModule::GenerateAllegiance;
